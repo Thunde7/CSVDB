@@ -1,0 +1,20 @@
+{
+    "schema": [
+        {
+            "field": "title",
+            "type": "varchar"
+        },
+        {
+            "field": "year",
+            "type": "int"
+        },
+        {
+            "field": "duration",
+            "type": "int"
+        },
+        {
+            "field": "score",
+            "type": "float"
+        }
+    ]
+}
