@@ -7,14 +7,14 @@ yea thats it
 
 our current TODO list:
 
-1. Drop cmd - Tommy
-2. cmdline - Tommy
-3. QA - together
-4. select into - Omri
-5. where, order by - Omri
-6. group by, having - Tommy
-7. QA - together
-8. dealing with nulls - Together
-9. better assert - Omri
-10. making code pretty - Tommy
-11. ashcara .zis format - Together
+
+1. cmdline - Tommy
+2. QA - together
+3. select into - Omri
+4. where, order by - Omri
+5. group by, having - Tommy
+6. QA - together
+7. dealing with nulls - Together
+8. better assert - Omri
+9. making code pretty - Tommy
+10. ashcara .zis format - Together
