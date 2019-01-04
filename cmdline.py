@@ -1,11 +1,11 @@
-import sqlparser,createTable
+import parser
+
 while True:
     cmd = input('csvdb> ').strip()
     while cmd[-1] != ';':
         cmd += input()
         cmd = cmd.strip()
-    parser = sqlparser.SqlParser(cmd)
-    createTable.create_table(parser.parse_show_error())
+    parser = parser.parser(cmd)
 
 
 def text_from_keyboard():

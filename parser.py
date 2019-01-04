@@ -1,15 +1,24 @@
 import sqltokenizer as token
-import json,os,csv
+import json, os, csv, shutil
 
 path = os.getcwd()
 if not os.path.exists('DBS'): os.mkdir("DBS")
 dbspath = os.path.join(path,'DBS')
 os.chdir(dbspath)
 
+class TableDoesNotExistError(Exception):
+    def __init__(self, name):
+        self.message = 'the table {} does not exist'.format(name)
+
+    def __str__(self):
+        return self.message
 
 class TableExistsError(Exception):
-    def __init(self,name):
+    def __init__(self,name):
         self.message = 'the table {} already exists'.format(name)
+
+    def __str__(self):
+        return self.message
 
 class CSVDBSyntaxError(ValueError):
     def __init__(self, message, line, col, text):
@@ -42,6 +51,8 @@ class Tok(object):
 
     def __eq__(self,other):
         return self.kind == other.kind and self.val == other.val
+
+
 class read_scheme(object):
     
     def __init__(self,filename):
@@ -54,6 +65,7 @@ class read_scheme(object):
 
     def type_by_field(self,field):
         return self.fields[self.nameIndexDict[field]]["type"]
+
 
 class select(object):
     def __init__(self,fields,file_name,origin,where_cond,group_field,group_cond,order_fields):
@@ -96,6 +108,7 @@ class select(object):
                 if item != row[-1]: print(item,end=',')
                 else: print(item)
 
+
 class load(object):
     def __init__(self,origin,name,ignoring,fields=['*']):
         os.chdir(origin)
@@ -136,6 +149,7 @@ class load(object):
         s.close()
         json.dump({'schema': self.scheme},open(self.name+'.json','w'),indent=4)
         
+
 class create(object):
     def __init__(self,table_name,if_not_exists,fields):
         self.name = table_name
@@ -160,6 +174,19 @@ class create(object):
     def create_scheme(self):
         res = [{'field':field,'type':typ} for field,typ in self.fields.items()]
         json.dump({'schema': res },open(self.name+'.json','w'),indent=4)
+
+class drop(object):
+    def __init__(self,table_name,if_exists):
+        self.ie = if_exists
+        self.name = table_name
+        self.drop_table()
+
+    def drop_table(self):
+        if os.path.exists(self.name):
+            shutil.rmtree(self.name)
+            print("the table {} has been deleted".format(self.name))
+        elif not self.ie:
+            raise TableDoesNotExistError(self.name)
 
 class parser(object):
     
@@ -261,7 +288,17 @@ class parser(object):
         load(origin,table_name,ignoring)
 
     def drop(self):
-        raise NotImplementedError
+        assert(self.tokens[self._index] == Tok(token.SqlTokenKind.KEYWORD,'table'))
+        self.step()
+        if_exists = False
+        if self.tokens[self._index] == Tok(token.SqlTokenKind.KEYWORD,'if'):
+            self.step()
+            assert(self.tokens[self._index] == Tok(token.SqlTokenKind.KEYWORD,'exists'))
+            self.step()
+            if_exists = True
+        assert(self.cur_kind() == token.SqlTokenKind.IDENTIFIER)
+        table_name = self.cur_val()
+        drop(table_name,if_exists)
 
     def createAS(self,table_name,if_not_exists):
         raise NotImplementedError
@@ -341,6 +378,25 @@ text2 = r""" load data
                         aaa
         ;"""
 text3 = 'create table movies2 (title varchar,year int,duration int,score float)'
+text4 = r""" drop table                                                
+
+
+
+
+
+
+
+
+
+
+
+
+   movies2
+        ;"""
+
+
+
+
+        
 if __name__ == '__main__':
-    parser(text3)
-    
+    parser(text4)
