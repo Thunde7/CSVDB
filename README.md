@@ -5,7 +5,7 @@ using python
 yea thats it
 
 
-our current TODO list:
+our current TODO list: \n 
 0. Drop cmd - Tommy
 1. cmdline - Tommy
 2. QA - together
