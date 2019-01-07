@@ -1,18 +1,21 @@
-import parser
+import DBparser, os
+
+##############
+# Preperation
+##############
+path = os.getcwd()
+if not os.path.exists('DBS'): os.mkdir("DBS")
+dbspath = os.path.join(path,'DBS')
+os.chdir(dbspath)
 
 while True:
     cmd = input('csvdb> ').strip()
-    while cmd[-1] != ';':
+    while cmd != '' and cmd[-1] != ';':
         cmd += input()
         cmd = cmd.strip()
-    parser = parser.parser(cmd)
+    try:
+        Node = DBparser.Parser(cmd).process()
+        Node.execute()
+    except AssertionError as e:
+        print(e)
 
-
-def text_from_keyboard():
-    print("Enter text. Finishh with a line containin ONLY ;")
-    text = ""
-    while True:
-        line = input("csvdb> ")
-        text += line + "\n"
-        if text[-2] == ";":
-            return text
