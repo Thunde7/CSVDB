@@ -1,3 +1,6 @@
+################
+#Token digesting
+################
 class Tok(object):
     def __init__(self,kind,val,line=None,col=None):
         self.kind = kind

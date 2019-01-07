@@ -1,3 +1,6 @@
+#####################
+#Table related errors
+#####################
 class CSVDBSyntaxError(ValueError):
     def __init__(self, message, line, col, text):
         super().__init__()

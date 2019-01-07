@@ -1,3 +1,6 @@
+############
+#SQL Comands
+############
 import os,json,shutil,csv
 from Errors import *
 
@@ -96,7 +99,7 @@ class load(object):
         json.dump({'schema': self.scheme},open(self.name+'.json','w'),indent=4)
         
     def execute(self):
-        self.loader(self.fields)
+        self.loader()
         self.creator()
         print("Table {}.zis was loaded from {}.zis without {} rows".format(self.name,self.origin,self.ignoring))
         os.chdir('..')

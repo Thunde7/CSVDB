@@ -1,4 +1,6 @@
-from __future__ import print_function
+################
+#Tal's tokenizer
+################
 import ast
 from enum import Enum
 import re

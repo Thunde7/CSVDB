@@ -1,7 +1,6 @@
 import sqltokenizer as token
 from cmds import *
 from Tok import Tok
-import json, os, csv, shutil
 
 
     
@@ -44,23 +43,26 @@ class Parser(object):
             self.tokens.append(Tok(tok,val,line,col))
             if tok == token.SqlTokenKind.EOF:
                 break
-        print("text processed")
+        print("text digested")
 
     def process(self):
+        'getting the correct type of parsing,returns an error if not a function of SQL'
+        print("Processing text")
         if self.cur_val() == 'load':
             self.step()
             return self.load()
-        if self.cur_val() == 'drop':
+        elif self.cur_val() == 'drop':
             self.step()
             return self.drop()
-        if self.cur_val() == 'create':
+        elif self.cur_val() == 'create':
             self.step()
             return self.create()
-        if self.cur_val() == 'select':
+        elif self.cur_val() == 'select':
             self.step()
             return self.select()
+        else: raise CSVDBSyntaxError("unrecognized Function\n",self.tokens[self._index].line,
+                                        self.tokens[self._index].col, "please check your Input!")
 
-            
     def step(self,n=1):
         self._index += n
 
@@ -71,7 +73,8 @@ class Parser(object):
         return self.tokens[self._index].kind
 
     def create(self):
-        assert(self.cur_val() == 'table')
+        'parsing the create function syntax, asserting long to way to make sure its the correct syntax' 
+        self.tokens[self._index].is_equal(Tok(token.SqlTokenKind.KEYWORD,'table'))
         self.step()
         if_not_exists = False
         if self.tokens[self._index] == Tok(token.SqlTokenKind.KEYWORD,'if'):
@@ -110,6 +113,7 @@ class Parser(object):
         return create(table_name,if_not_exists,fields)            
     
     def load(self):
+        'parsing the load function syntax, asserting long to way to make sure its the correct syntax'
         self.tokens[self._index].is_equal(Tok(token.SqlTokenKind.KEYWORD,'data'))
         self.step()
         self.tokens[self._index].is_equal(Tok(token.SqlTokenKind.KEYWORD,'infile'))
@@ -136,6 +140,7 @@ class Parser(object):
         return load(origin,table_name,ignoring)
 
     def drop(self):
+        'parsing the drop function syntax, asserting long to way to make sure its the correct syntax'
         self.tokens[self._index].is_equal(Tok(token.SqlTokenKind.KEYWORD,'table'))
         self.step()
         if_exists = False
@@ -152,6 +157,7 @@ class Parser(object):
         raise NotImplementedError
 
     def select(self):
+        'parsing the select function syntax, asserting long to way to make sure its the correct syntax'
         file_name = None
         where_cond = None
         group_field = None
@@ -206,6 +212,3 @@ class Parser(object):
         return select(fields,file_name,origin,where_cond,group_field,group_cond,order_fields)            
 
 
-        
-if __name__ == '__main__':
-    Parser(text4)
