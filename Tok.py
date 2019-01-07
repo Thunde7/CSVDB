@@ -19,3 +19,15 @@ class Tok(object):
             assert(self == other)
         except AssertionError:
             raise AssertionError("error at line {}, columm {}, should be equal to {}".format(self.line,self.col,other))
+
+        def is_KEYWORD(self):
+        try:
+            assert(self.kind == SqlTokenKind.KEYWORD)
+        except AssertionError:
+            raise AssertionError("error at line {}, columm {}, should be a Keyword".format(self.line,self.col))
+        
+    def is_IDENTIFIER(self):
+        try:
+            assert(self.kind == SqlTokenKind.IDENTIFIER)
+        except AssertionError:
+            raise AssertionError("error at line {}, columm {}, should be an Identifier".format(self.line,self.col))

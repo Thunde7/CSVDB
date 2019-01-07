@@ -1,6 +1,7 @@
 import sqltokenizer as token
 from cmds import *
 from Tok import Tok
+from Errors import CSVDBSyntaxError
 
 
     
@@ -92,19 +93,19 @@ class Parser(object):
             self.createAS(table_name,if_not_exists)
         assert(self.cur_val() == '(')
         self.step()
-        assert(self.cur_kind() == token.SqlTokenKind.IDENTIFIER)
+        self.tokens[self._index].is_IDENTIFIER()
         f = self.cur_val()
         self.step()
-        assert(self.cur_kind() == token.SqlTokenKind.KEYWORD)
+        self.tokens[self._index].is_KEYWORD()
         t = self.cur_val()
         fields = {f:t}
         self.step()
         while self.cur_kind() != token.SqlTokenKind.OPERATOR or self.cur_val() != ')':
             if self.cur_val() == "," : self.step()
-            assert(self.cur_kind() == token.SqlTokenKind.IDENTIFIER)
+            self.tokens[self._index].is_IDENTIFIER()
             fiel = self.cur_val()
             self.step()
-            assert(self.cur_kind() == token.SqlTokenKind.KEYWORD)
+            self.tokens[self._index].is_KEYWORD()
             typ = self.cur_val()
             fields[fiel] = typ
             self.step()
@@ -139,6 +140,7 @@ class Parser(object):
         assert(self.cur_val() == None or self.cur_val() == ';')
         return load(origin,table_name,ignoring)
 
+
     def drop(self):
         'parsing the drop function syntax, asserting long to way to make sure its the correct syntax'
         self.tokens[self._index].is_equal(Tok(token.SqlTokenKind.KEYWORD,'table'))
@@ -149,7 +151,7 @@ class Parser(object):
             self.tokens[self._index].is_equal(Tok(token.SqlTokenKind.KEYWORD,'exists'))
             self.step()
             if_exists = True
-        assert(self.cur_kind() == token.SqlTokenKind.IDENTIFIER)
+        self.tokens[self._index].is_IDENTIFIER()
         table_name = self.cur_val()
         return drop(table_name,if_exists)
 
@@ -168,41 +170,41 @@ class Parser(object):
         while self.cur_kind() != token.SqlTokenKind.KEYWORD:
             fields.append(self.cur_val())
             self.step()
-        assert(self.cur_kind() == token.SqlTokenKind.KEYWORD)
+        self.tokens[self._index].is_KEYWORD()
         if self.cur_val() == 'into':
             self.step()
-            assert(self.cur_val() == 'outfile')
+            self.tokens[self._index].is_equal(Tok(token.SqlTokenKind.KEYWORD,'outfile'))
             self.step()
-            assert(self.cur_kind() == token.SqlTokenKind.IDENTIFIER)
+            self.tokens[self._index].is_IDENTIFIER()
             file_name - self.cur_val() 
             self.step()
-        assert(self.cur_val() == 'from')
+        self.tokens[self._index].is_equal(Tok(token.SqlTokenKind.KEYWORD,'from'))
         self.step()
-        assert(self.cur_kind() == token.SqlTokenKind.IDENTIFIER)
+        self.tokens[self._index].is_IDENTIFIER()
         origin = self.cur_val()
         self.step()
         if self.tokens[self._index] == Tok(token.SqlTokenKind.KEYWORD,'where'):
             self.step()
-            assert(self.cur_kind() == token.SqlTokenKind.KEYWORD)
+            self.tokens[self._index].is_KEYWORD()
             where_cond = self.cur_val()
             self.step()
         if self.tokens[self._index] == Tok(token.SqlTokenKind.KEYWORD,'group'):
             self.step()
-            assert(self.cur_val() == 'by')
+            self.tokens[self._index].is_equal(Tok(token.SqlTokenKind.KEYWORD,'by'))
             self.step()
-            assert(self.cur_kind() == token.SqlTokenKind.IDENTIFIER)
+            self.tokens[self._index].is_IDENTIFIER()
             group_field = self.cur_val()
             self.step()
         if self.tokens[self._index] == Tok(token.SqlTokenKind.KEYWORD,'having'):
             self.step()
-            assert(self.cur_kind() == token.SqlTokenKind.IDENTIFIER)
+            self.tokens[self._index].is_IDENTIFIER()
             group_cond = self.cur_val()
             self.step()
         if self.tokens[self._index] == Tok(token.SqlTokenKind.KEYWORD,'order'):
             self.step()
-            assert(self.cur_val() == 'by')
+            self.tokens[self._index].is_equal(Tok(token.SqlTokenKind.KEYWORD,'by'))
             self.step()
-            assert(self.cur_kind() == token.SqlTokenKind.IDENTIFIER)
+            self.tokens[self._index].is_IDENTIFIER()
             order_fields = [self.cur_val()]
             self.step()
             while self.cur_kind() != token.SqlTokenKind.OPERATOR or self.tokens[self._index] != ';':
