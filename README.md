@@ -1,9 +1,12 @@
-#CSVDB
+# CSVDB
 
-SQL interpreter using python
-basicly, taking an sql code and doing what is says;
-using python
-yea thats it
+SQL interpreter using python;
+
+basiclly, taking an sql code and doing what is says;
+
+using python;
+
+yeah thats it;
 
 
 our current TODO list:
@@ -12,6 +15,7 @@ our current TODO list:
 |:-----------------------:|:-------------:|:----------------------------:|
 |QA                       |together       |1                             |
 |turning .zis to pulke ish|together       |9                             |
+|create as                |Tommy          |2                             |
 |commenting               |both           |2                             |
 |where, order by          |Omri           |4                             |
 |group by, having         |Tommy          |4                             |
