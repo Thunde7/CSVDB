@@ -1,9 +1,12 @@
 # CSVDB
 
-SQL interpreter using python
-basicly, taking an sql code and doing what is says;
-using python
-yeah thats it
+SQL interpreter using python;
+
+basiclly, taking an sql code and doing what is says;
+
+using python;
+
+yeah thats it;
 
 
 our current TODO list:
