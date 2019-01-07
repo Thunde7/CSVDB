@@ -1,9 +1,9 @@
-#CSVDB
+# CSVDB
 
 SQL interpreter using python
 basicly, taking an sql code and doing what is says;
 using python
-yea thats it
+yeah thats it
 
 
 our current TODO list:
