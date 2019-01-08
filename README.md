@@ -1,6 +1,6 @@
 # CSVDB
 
-SQL interpreter using python;
+SQLite interpreter using python;
 
 basiclly, taking an sql code and doing what is says;
 
