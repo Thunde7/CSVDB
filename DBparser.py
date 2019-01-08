@@ -161,7 +161,7 @@ class Parser(object):
     def select(self):
         'parsing the select function syntax, asserting long to way to make sure its the correct syntax'
         file_name = None
-        where_cond = None
+        where_cond = []
         group_field = None
         group_cond = None
         order_fields = None
@@ -187,6 +187,12 @@ class Parser(object):
             self.step()
             self.tokens[self._index].is_kind("IDENTIFIER")
             where_cond.append(self.cur_val()) 
+            self.step()
+            self.tokens[self._index].is_kind("OPERATOR")
+            where_cond.append(self.cur_val())
+            self.step()
+            self.tokens[self._index].is_kind("LIT_NUM")
+            where_cond.append(self.cur_val())
             self.step()
         if self.tokens[self._index] == Tok(token.SqlTokenKind.KEYWORD,'group'):
             self.step()
