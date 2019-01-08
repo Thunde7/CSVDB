@@ -93,19 +93,19 @@ class Parser(object):
             self.createAS(table_name,if_not_exists)
         assert(self.cur_val() == '(')
         self.step()
-        self.tokens[self._index].is_IDENTIFIER()
+        self.tokens[self._index].is_kind("IDENTIFIER")
         f = self.cur_val()
         self.step()
-        self.tokens[self._index].is_KEYWORD()
+        self.tokens[self._index].is_kind("KEYWORD")
         t = self.cur_val()
         fields = {f:t}
         self.step()
         while self.cur_kind() != token.SqlTokenKind.OPERATOR or self.cur_val() != ')':
             if self.cur_val() == "," : self.step()
-            self.tokens[self._index].is_IDENTIFIER()
+            self.tokens[self._index].is_kind("IDENTIFIER")
             fiel = self.cur_val()
             self.step()
-            self.tokens[self._index].is_KEYWORD()
+            self.tokens[self._index].is_kind("KEYWORD")
             typ = self.cur_val()
             fields[fiel] = typ
             self.step()
@@ -132,7 +132,7 @@ class Parser(object):
         ignoring = 0
         if self.tokens[self._index] == Tok(token.SqlTokenKind.KEYWORD,'ignore'):
             self.step()
-            assert(self.cur_kind() == token.SqlTokenKind.LIT_NUM)
+            self.tokens[self._index].is_kind("LIT_NUM")
             ignoring =self.cur_val()
             self.step()
             self.tokens[self._index].is_equal(Tok(token.SqlTokenKind.KEYWORD,'lines'))
@@ -151,7 +151,7 @@ class Parser(object):
             self.tokens[self._index].is_equal(Tok(token.SqlTokenKind.KEYWORD,'exists'))
             self.step()
             if_exists = True
-        self.tokens[self._index].is_IDENTIFIER()
+        self.tokens[self._index].is_kind("IDENTIFIER")
         table_name = self.cur_val()
         return drop(table_name,if_exists)
 
@@ -170,41 +170,41 @@ class Parser(object):
         while self.cur_kind() != token.SqlTokenKind.KEYWORD:
             fields.append(self.cur_val())
             self.step()
-        self.tokens[self._index].is_KEYWORD()
+        self.tokens[self._index].is_kind("KEYWORD")
         if self.cur_val() == 'into':
             self.step()
             self.tokens[self._index].is_equal(Tok(token.SqlTokenKind.KEYWORD,'outfile'))
             self.step()
-            self.tokens[self._index].is_IDENTIFIER()
+            self.tokens[self._index].is_kind("IDENTIFIER")
             file_name - self.cur_val() 
             self.step()
         self.tokens[self._index].is_equal(Tok(token.SqlTokenKind.KEYWORD,'from'))
         self.step()
-        self.tokens[self._index].is_IDENTIFIER()
+        self.tokens[self._index].is_kind("IDENTIFIER")
         origin = self.cur_val()
         self.step()
         if self.tokens[self._index] == Tok(token.SqlTokenKind.KEYWORD,'where'):
             self.step()
-            self.tokens[self._index].is_KEYWORD()
-            where_cond = self.cur_val()
+            self.tokens[self._index].is_kind("IDENTIFIER")
+            where_cond.append(self.cur_val()) 
             self.step()
         if self.tokens[self._index] == Tok(token.SqlTokenKind.KEYWORD,'group'):
             self.step()
             self.tokens[self._index].is_equal(Tok(token.SqlTokenKind.KEYWORD,'by'))
             self.step()
-            self.tokens[self._index].is_IDENTIFIER()
+            self.tokens[self._index].is_kind("IDENTIFIER")
             group_field = self.cur_val()
             self.step()
         if self.tokens[self._index] == Tok(token.SqlTokenKind.KEYWORD,'having'):
             self.step()
-            self.tokens[self._index].is_IDENTIFIER()
+            self.tokens[self._index].is_kind("IDENTIFIER")
             group_cond = self.cur_val()
             self.step()
         if self.tokens[self._index] == Tok(token.SqlTokenKind.KEYWORD,'order'):
             self.step()
             self.tokens[self._index].is_equal(Tok(token.SqlTokenKind.KEYWORD,'by'))
             self.step()
-            self.tokens[self._index].is_IDENTIFIER()
+            self.tokens[self._index].is_kind("IDENTIFIER")
             order_fields = [self.cur_val()]
             self.step()
             while self.cur_kind() != token.SqlTokenKind.OPERATOR or self.tokens[self._index] != ';':

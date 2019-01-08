@@ -1,6 +1,7 @@
 ################
 #Token digesting
 ################
+from sqltokenizer import *
 class Tok(object):
     def __init__(self,kind,val,line=None,col=None):
         self.kind = kind
@@ -20,14 +21,10 @@ class Tok(object):
         except AssertionError:
             raise AssertionError("error at line {}, columm {}, should be equal to {}".format(self.line,self.col,other))
 
-        def is_KEYWORD(self):
+    def is_kind(self,kind):
         try:
-            assert(self.kind == SqlTokenKind.KEYWORD)
+            assert(self.kind == eval("SqlTokenKind.{}".format(kind)))
         except AssertionError:
-            raise AssertionError("error at line {}, columm {}, should be a Keyword".format(self.line,self.col))
-        
-    def is_IDENTIFIER(self):
-        try:
-            assert(self.kind == SqlTokenKind.IDENTIFIER)
-        except AssertionError:
-            raise AssertionError("error at line {}, columm {}, should be an Identifier".format(self.line,self.col))
+            raise AssertionError("error at line {}, columm {}, should be of {} kind".format(self.line,self.col,kind))
+    
+   

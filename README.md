@@ -8,7 +8,6 @@ using python;
 
 yeah thats it;
 
-
 our current TODO list:
 
 |Mission                  |Who            |Priority (10 is min, 1 is max)|
@@ -19,6 +18,7 @@ our current TODO list:
 |commenting               |both           |2                             |
 |where, order by          |Omri           |4                             |
 |group by, having         |Tommy          |4                             |
+|aggregation              |Tommy          |5                             |
 |QAv2                     |together       |6                             |
 |dealing with nulls       |together       |6                             |
 |ashcara .zis format      |together       |5                             |

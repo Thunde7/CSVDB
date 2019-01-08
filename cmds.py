@@ -24,14 +24,22 @@ class select(object):
         self.fields = {field : self.old_scheme.type_by_field(field) for field in fields}
         self.origin = origin
         self.name = file_name
-        if where_cond or group_field or group_cond or order_fields:
+        if where_cond:
+            self.where_cond = lambda item : eval("{} {} {}".format(item,where_cond[1],where_cond[2]))
+            self.where_field = where_cond[0]
+        else:
+            self.where_cond = lambda x : True
+            self.where_field = self.old_scheme.fields[0]['field'] #default value will be the first field
+        if group_field or group_cond or order_fields:
             raise NotImplementedError
 
     def table_by_rules(self):
         raw_table = csv.reader(open(self.origin + '.zis'))
         self.table = []
+        needed_fields = {field : self.old_scheme.index_by_field(field) for field in self.fields}
         for row in raw_table:
-            row_to_add = [row[i] for i in [self.old_scheme.index_by_field(field) for field in self.fields]]
+            if not self.where_cond(row[needed_fields[self.where_field]]): continue
+            row_to_add = [row[i] for i in needed_fields.values()]
             self.table.append(row_to_add)
     
     def create_file(self,file_name): 
