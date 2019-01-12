@@ -12,13 +12,14 @@ our current TODO list:
 
 |Mission                  |Who            |Priority (10 is min, 1 is max)|
 |:-----------------------:|:-------------:|:----------------------------:|
-|QA                       |together       |1                             |
-|turning .zis to pulke ish|together       |9                             |
-|create as                |Tommy          |2                             |
-|commenting               |both           |2                             |
-|where, order by          |Omri           |4                             |
-|group by, having         |Tommy          |4                             |
+|QA                       |together       |0                             |
+|turning .zis to pulke ish|together       |8                             |
+|create as                |Tommy          |1                             |
+|commenting               |both           |1                             |
+|finish up order by       |Omri           |3                             |
+|finish up group by       |Tommy          |4                             |
+|having                   |Tommy          |5                             |
 |aggregation              |Tommy          |5                             |
 |QAv2                     |together       |6                             |
-|dealing with nulls       |together       |6                             |
+|dealing with nulls       |together       |4                             |
 |ashcara .zis format      |together       |5                             |
