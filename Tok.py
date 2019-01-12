@@ -20,7 +20,7 @@ class Tok(object):
             assert(self == other)
             return True
         except AssertionError:
-            raise AssertionError("error at line {}, columm {}, should be equal to {}".format(self.line,self.col,other))
+            raise AssertionError("error at line {}, columm {}, should be equal to {}\n was {}".format(self.line,self.col,other,self))
 
     def is_kind(self,kind):
         try:
