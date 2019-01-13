@@ -14,7 +14,7 @@ class Table(object):
     def __next__(self):
         if self.current == self.length: raise StopIteration
         self.current += 1
-        return self.rows[self.columms-1]
+        return self.rows[self.current-1]
 
     def order(self,exprLst):
         for field,opt in exprLst:
