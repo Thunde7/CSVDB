@@ -10,7 +10,7 @@ yeah thats it;
 
 our current TODO list:
 
-|Mission                  |Who            |Priority (10 is min, 1 is max)|
+|Mission                  |Who            |Priority (10 is min, 0 is max)|
 |:-----------------------:|:-------------:|:----------------------------:|
 |QA                       |together       |0                             |
 |turning .zis to pulke ish|together       |8                             |
