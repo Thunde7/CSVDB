@@ -19,6 +19,6 @@ while True:
     try:
         Node = DBparser.Parser(cmd).process()
         Node.execute()
-    except AssertionError as e:
-        print(e)
+    except Exception as e:
+        print("the Exception was {} {}".format(e,type(e)))
 

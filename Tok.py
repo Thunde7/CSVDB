@@ -14,12 +14,13 @@ class Tok(object):
 
     def __eq__(self,other):
         return self.kind == other.kind and self.val == other.val
-
+        
     def is_equal(self,other):
         try:
             assert(self == other)
+            return True
         except AssertionError:
-            raise AssertionError("error at line {}, columm {}, should be equal to {}".format(self.line,self.col,other))
+            raise AssertionError("error at line {}, columm {}, should be equal to {}\n was {}".format(self.line,self.col,other,self))
 
     def is_kind(self,kind):
         try:
