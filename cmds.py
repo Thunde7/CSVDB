@@ -56,12 +56,15 @@ class select(object):
         json.dump({'schema': scheme },open(file_name+'.json','w'),indent=4)
         os.chdir('..')
 
-    def execute(self):
+    def execute(self,verbose):
         self.table_by_rules()
+        if verbose:
+            print('table {} created by select command'.format(self.name))
         os.chdir('..')
         if self.name:
             self.create_file(self.name)
-        print(self.table)
+        if verbose:
+            print(self.table)
 
 class load(object):
     def __init__(self,origin,name,ignoring):
@@ -83,9 +86,10 @@ class load(object):
         json.dump({'schema': self.scheme},open(self.name+'.json','w'),indent=4)
         os.chdir('..')
         
-    def execute(self):
+    def execute(self, verbose):
         self.loader()
-        print("Table {}.zis was loaded from {}.zis without {} rows".format(self.name,self.origin,self.ignoring))
+        if verbose:
+            print("Table {}.zis was loaded from {}.zis without {} rows".format(self.name,self.origin,self.ignoring))
         os.chdir('..')
 
 class create(object):
@@ -106,11 +110,13 @@ class create(object):
         res = [{'field':field,'type':typ} for field,typ in self.fields.items()]
         json.dump({'schema': res },open(self.name+'.json','w'),indent=4)
 
-    def execute(self):
+    def execute(self,verbose):
         self.create_table()
-        print('Table {}.zis created'.format(self.name))
+        if verbose:
+            print('Table {}.zis created'.format(self.name))
         self.create_scheme()
-        print('scheme {}.json created'.format(self.name))
+        if verbose:
+            print('scheme {}.json created'.format(self.name))
         os.chdir('..')
 
         
@@ -126,5 +132,7 @@ class drop(object):
         elif not self.ie:
             raise TableDoesNotExistError(self.name)
 
-    def execute(self):
+    def execute(self,verbose):
         self.drop_table()
+        if verbose:
+            print('table dropped')
