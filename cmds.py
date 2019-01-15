@@ -21,6 +21,7 @@ class select(object):
             raise NotImplementedError
         
     def get_where(self,where_cond):
+        if where_cond == []: self.where_lines = [i for i in range(self.old_table.length)]; return  
         constant = where_cond[2] if where_cond[2] != 'NULL' or self.fields[where_cond[0]] != 'varchar' else '' 
         where_dict = {
         '<': lambda item : item != 'NULL' and item < constant,
@@ -43,6 +44,7 @@ class select(object):
                 self.new_columms[i].append(needed_columms[i][line])
         table_columms = [Columm(list(self.fields.keys())[i],list(self.fields.values())[i],self.new_columms[i])\
                                              for i in range(len(self.fields))]
+        print('E')
         self.table = Table(table_columms)
         self.table.order(self.order)
         
