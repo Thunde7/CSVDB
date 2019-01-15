@@ -5,7 +5,7 @@ class Columm(object):
         if self.typ in ['int','timestamp']:
             self.items = []
             for item in item_list:
-                if item != "": self.items.append(int(item))
+                if item not in ["",'NULL']: self.items.append(int(item))
                 else: self.items.append("NULL")
         elif self.typ == 'float': self.items = [float(item) for item in item_list]
         else: self.items = item_list
@@ -42,3 +42,4 @@ class Columm(object):
                 group_lines.append(group)
                 group = [line]
         return group_lines
+
