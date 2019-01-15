@@ -19,6 +19,6 @@ class Table(object):
     def order(self,exprLst):
         for field,opt in exprLst:
             order = self.columms[field].get_order(opt == 'desc') # false if asc, true if desc
-            print(order)
             for col in self.columms.values():
                 col.order_by(order)
+        self.rows = [[str(col[i]) for col in self.columms.values()] for i in range(self.length)]
