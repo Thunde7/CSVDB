@@ -25,7 +25,7 @@ class Columm(object):
 
     def get_order(self,opt):
         numbered_items = zip(self.items,range(len(self.items)))
-        return [item[1] for item in sorted(numbered_items,reverse = opt)]
+        return [new_i for item,new_i in sorted(numbered_items,reverse = opt)]
     
     def order_by(self,s):
         new_items = [self.items[i] for i in s]
