@@ -71,6 +71,7 @@ class Parser(object):
         x = self.tokens[self._index]
         self.step()
         return x
+
     def cur_val(self):
         return self.tokens[self._index].val
     
@@ -85,13 +86,13 @@ class Parser(object):
             self.cur_tok().is_equal(Tok(token.SqlTokenKind.KEYWORD,'not'))
             self.cur_tok().is_equal(Tok(token.SqlTokenKind.KEYWORD,'exists'))
             if_not_exists == True
-        t = self.cur_tok()
+        t = self.cur_tok()  
         t.is_kind("IDENTIFIER")
         table_name = t.val
-        if self.cur_tok() == (Tok(token.SqlTokenKind.KEYWORD,'as')):
+        x = self.cur_tok()
+        if x == (Tok(token.SqlTokenKind.KEYWORD,'as')):
             self.createAS(table_name,if_not_exists)
-        assert(self.cur_val() == '(')
-        self.step()
+        x.is_equal(Tok(token.SqlTokenKind.OPERATOR,'('))
         fiel = self.cur_tok()
         fiel.is_kind("IDENTIFIER")
         typ = self.cur_tok()
@@ -121,27 +122,28 @@ class Parser(object):
         table_name.is_kind("IDENTIFIER")
         table_name = table_name.val
         ignoring = 0
-        if self.cur_tok() == Tok(token.SqlTokenKind.KEYWORD,'ignore'):
+        x = self.cur_tok()
+        if x == Tok(token.SqlTokenKind.KEYWORD,'ignore'):
             ignoring = self.cur_tok()
             ignoring.is_kind("LIT_NUM")
             ignoring = ignoring.val
             self.cur_tok().is_equal(Tok(token.SqlTokenKind.KEYWORD,'lines'))
-        assert(self.cur_val() == None or self.cur_val() == ';')
+            x = self.cur_tok()
+        assert(x.val == None or x.val == ';')
         return load(origin,table_name,ignoring)
 
 
     def drop(self):
         'parsing the drop function syntax, asserting long to way to make sure its the correct syntax'
         self.cur_tok().is_equal(Tok(token.SqlTokenKind.KEYWORD,'table'))
-        self.step()
         if_exists = False
-        if self.cur_tok() == Tok(token.SqlTokenKind.KEYWORD,'if'):
-            self.step()
+        x = self.cur_tok()
+        if x == Tok(token.SqlTokenKind.KEYWORD,'if'):
             self.cur_tok().is_equal(Tok(token.SqlTokenKind.KEYWORD,'exists'))
-            self.step()
             if_exists = True
-        self.cur_tok().is_kind("IDENTIFIER")
-        table_name = self.cur_val()
+            x = self.cur_tok()
+        x.is_kind("IDENTIFIER")
+        table_name = x.val
         return drop(table_name,if_exists)
 
     def createAS(self,table_name,if_not_exists):

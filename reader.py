@@ -4,9 +4,11 @@ import csv,os,json
 
 class read_scheme(object):
     def __init__(self,filename):
+        os.chdir(filename)
         reader = json.load(open(filename+'.json','r'))
         self.fields = reader["schema"]
         self.nameIndexDict = {field["field"] : i for i,field in enumerate(self.fields)}
+        os.chdir('..')
 
     def index_by_field(self,field):
         return self.nameIndexDict[field]
@@ -17,10 +19,10 @@ class read_scheme(object):
 
 def reader(filename):
     assert(os.path.exists(filename))
-    os.chdir(filename)
     scheme = read_scheme(filename)
+    os.chdir(filename)
     if not os.path.exists(filename + '.zis'):
-        fil = csv.reader(open(filename))
+        fil = csv.reader(open(filename+ '.csv'))
     else: fil = csv.reader(open(filename + '.zis')) #need to implement pulke ish
     for i,line in enumerate(fil):
         if i == 0: columms = [[] for _ in line]
@@ -32,11 +34,10 @@ def reader(filename):
 
 
 def write(filename,table,ignoring = 0):
-    os.chdir(filename)
     fil = open(filename + '.zis','w')
     for i,row in enumerate(table):
         if ignoring <= i:
-            fil.write(row)
+            fil.write(','.join(row))
             fil.write('\n')
     
 

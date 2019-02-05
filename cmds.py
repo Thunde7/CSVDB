@@ -67,7 +67,6 @@ class select(object):
 
 class load(object):
     def __init__(self,origin,name,ignoring):
-        os.chdir(origin)
         self.origin = origin
         self.raw_table = reader.reader(self.origin)
         print("Table {}.zis loaded".format(self.origin))
@@ -77,12 +76,12 @@ class load(object):
         self.ignoring = ignoring
 
     def loader(self):
-        os.chdir('..')
         if os.path.exists(self.name): raise TableExistsError(self.name)
         os.mkdir(self.name)
+        os.chdir(self.name)
         reader.write(self.name,self.raw_table,self.ignoring)
         
-        json.dump({'schema': self.scheme},open(self.name+'.json','w'),indent=4)
+        json.dump({'schema': self.scheme.fields},open(self.name+'.json','w'),indent=4)
         os.chdir('..')
         
     def execute(self):
