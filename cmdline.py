@@ -20,5 +20,32 @@ while True:
         Node = DBparser.Parser(cmd).process()
         Node.execute()
     except Exception as e:
-        print("the Exception was {} {}".format(e,type(e)))
+        print("the Exception was: {} {}".format(e,type(e)))
+
+            
+text1 = r""" create table 
+            if not exists abc 
+        (a int, 
+            b varchar, 
+            c float)
+
+
+             ;"""       
+             
+text2 = r""" load data  
+             infile 
+             
+             
+             
+             abc
+             
+                     into table 
+                     
+                        aaa
+        ;"""
+text3 = 'create table aab (title varchar,year int,duration int,score float);'
+
+text4 = r""" drop table                                                
+   aaa
+        ;"""
 

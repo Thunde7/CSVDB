@@ -10,7 +10,6 @@ from columm import Columm
 class select(object):
     def __init__(self,fields,file_name,origin,where_cond,group_field,group_cond,order_fields):
         self.old_table = reader.reader(origin)
-        os.chdir(origin)
         self.old_scheme = reader.read_scheme(origin)
         self.fields = {field : self.old_scheme.type_by_field(field) for field in fields}
         self.origin = origin
@@ -44,7 +43,6 @@ class select(object):
                 self.new_columms[i].append(needed_columms[i][line])
         table_columms = [Columm(list(self.fields.keys())[i],list(self.fields.values())[i],self.new_columms[i])\
                                              for i in range(len(self.fields))]
-        print('E')
         self.table = Table(table_columms)
         self.table.order(self.order)
         

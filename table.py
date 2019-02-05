@@ -5,7 +5,8 @@ class Table(object):
         self.rows = [[str(col[i]) for col in columms] for i in range(self.length)]
 
     def __repr__(self):
-        return '\n'.join([','.join(row) for row in self.rows[:100]])
+        le = min(self.length,100)
+        return '\n'.join([','.join(row) for row in self.rows[:le]])
 
     def __iter__(self):
         self.current = 0
