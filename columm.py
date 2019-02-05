@@ -1,3 +1,14 @@
+class NULL(int):
+    def __init__(self):
+        self.num = -(2**127-1)
+    
+    def __repr__(self):
+        return 'NULL'
+    
+    def __lt__(self,other):
+        return self.num < other
+
+
 class Columm(object):
     def __init__(self,header,typ,item_list):
         self.header = header
@@ -6,7 +17,7 @@ class Columm(object):
             self.items = []
             for item in item_list:
                 if item not in ["",'NULL']: self.items.append(int(item))
-                else: self.items.append("NULL")
+                else: self.items.append(NULL())
         elif self.typ == 'float': self.items = [float(item) for item in item_list]
         else: self.items = item_list
     
@@ -24,11 +35,11 @@ class Columm(object):
         return [line for line in range(len(self.items)) if where_func(self.items[line])]
 
     def get_order(self,opt):
-        numbered_items = zip(self.items,range(len(self.items)))
+        numbered_items = list(zip(self.items,range(len(self.items))))
         return [new_i for item,new_i in sorted(numbered_items,reverse = opt)]
     
-    def order_by(self,s):
-        new_items = [self.items[i] for i in s]
+    def order_by(self,seder):
+        new_items = [self.items[i] for i in seder]
         self.items = new_items
 
     def group(self):

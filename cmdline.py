@@ -44,8 +44,34 @@ def main():
             Node = DBparser.Parser(cmd.strip()+';').process()
             Node.execute(args.verbose)
     except Exception as e:
-            print("the Exception was {} {}".format(e,type(e)))
+        print("the Exception was: {}, the exception type was :{}".format(e,type(e)))
 
+            
+text1 = r""" create table 
+            if not exists abc 
+        (a int, 
+            b varchar, 
+            c float)
+
+
+             ;"""       
+             
+text2 = r""" load data  
+             infile 
+             
+             
+             
+             abc
+             
+                     into table 
+                     
+                        aaa
+        ;"""
+text3 = 'create table aab (title varchar,year int,duration int,score float);'
+
+text4 = r""" drop table                                                
+   aaa
+        ;"""
 
 if __name__ == "__main__":
     main()
