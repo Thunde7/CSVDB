@@ -1,8 +1,7 @@
 #################
 #CSVDB Comandline
 #################
-import DBparser, os, argparse
-
+import DBparser, os, argparse, platform
 ##############
 # Argparser
 ##############
@@ -18,26 +17,35 @@ os.chdir(args.rootdir)
 
 def get_cmd_text():
     while True:
-        cmd = input('csvdb> ').strip()
-        while cmd != '' and cmd[-1] != ';': #need to make comments work
-            inp = input().strip()
+        cmd = input('csvdb> ').strip() + " "
+        while cmd != '' and cmd[-2] != ';': #need to make comments work
+            inp = input().strip() + " "
             if "--" in inp:
                 inp = inp[:inp.index("--")]
             cmd += inp
         return cmd
 
+def clear_screen():
+    if platform.system() == 'Linux':
+        os.system('clear')
+    elif platform.system() == 'Windows':
+        os.system('cls')
 
-if args.run:
-    with open(args.run) as cmdfile:
-        cmd_list = cmdfile.read().split(";")
-else:
-    cmd_list = get_cmd_text().split(";")
+def main():
+    clear_screen()
+    if args.run:
+        with open(args.run) as cmdfile:
+            cmd_list = cmdfile.read().split(";")
+    else:
+        cmd_list = get_cmd_text().split(";")[:1]
 
-try:
-    for cmd in cmd_list:
-        Node = DBparser.Parser(cmd+';').process()
-        Node.execute(args.verbose)
-except Exception as e:
-        print("the Exception was {} {}".format(e,type(e)))
+    try:
+        for cmd in cmd_list:
+            Node = DBparser.Parser(cmd.strip()+';').process()
+            Node.execute(args.verbose)
+    except Exception as e:
+            print("the Exception was {} {}".format(e,type(e)))
 
 
+if __name__ == "__main__":
+    main()
