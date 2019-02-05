@@ -16,6 +16,17 @@ args = ap.parse_args()
 ##############
 os.chdir(args.rootdir)
 
+def get_cmd_text():
+    while True:
+        cmd = input('csvdb> ').strip()
+        while cmd != '' and cmd[-1] != ';': #need to make comments work
+            inp = input().strip()
+            if "--" in inp:
+                inp = inp[:inp.index("--")]
+            cmd += inp
+        return cmd
+
+
 if args.run:
     with open(args.run) as cmdfile:
         cmd_list = cmdfile.read().split(";")
@@ -29,13 +40,4 @@ try:
 except Exception as e:
         print("the Exception was {} {}".format(e,type(e)))
 
-def get_cmd_text():
-    while True:
-        cmd = input('csvdb> ').strip()
-        while cmd != '' and cmd[-1] != ';': #need to make comments work
-            inp = input().strip()
-            if "--" in inp:
-                inp = inp[:inp.index("--")]
-            cmd += inp
-        return cmd
 
