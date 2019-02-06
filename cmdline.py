@@ -1,24 +1,30 @@
-#################
-#CSVDB Comandline
-#################
+####################
+#CSVDB Commandline #
+####################
 import DBparser, os, argparse, platform
+
 ##############
-# Argparser
+# Argparser  #
 ##############
 ap = argparse.ArgumentParser()
 ap.add_argument("--rootdir",help = "directory under which all tables are stored",default=".")
 ap.add_argument("--run", help = "run all commands in a certain file")
 ap.add_argument("--verbose", help = "print log messages for debugging",action = "store_true")
 args = ap.parse_args()
-##############
-# Preperation
-##############
+
+###############
+# Preperation #
+###############
+
 os.chdir(args.rootdir)
+if not os.path.exists("DBS"):
+    os.mkdir("DBS")
+os.chdir("DBS")
 
 def get_cmd_text():
     while True:
         cmd = input('csvdb> ').strip() + " "
-        while cmd != '' and cmd[-2] != ';': #need to make comments work
+        while cmd != '' and cmd[-2] != ';': #needed to make comments work
             inp = input().strip() + " "
             if "--" in inp:
                 inp = inp[:inp.index("--")]
@@ -31,47 +37,55 @@ def clear_screen():
     elif platform.system() == 'Windows':
         os.system('cls')
 
+def catch_exception(cmd_list,args):
+    try:
+        for cmd in cmd_list:
+            Node = DBparser.Parser(cmd.strip()+';',args.verbose).process()
+            Node.execute(args.verbose)
+    except Exception as e:
+        return("The parsing failed; \n The Exception was: {}; \n That exception type is :{}".format(e,type(e)))
+    return(0)
+
 def main():
     clear_screen()
     if args.run:
         with open(args.run) as cmdfile:
             cmd_list = cmdfile.read().split(";")
+        catch_exception(cmd_list,args)
+        print("Finished with 0 Errors encounterd")
+    
     else:
-        cmd_list = get_cmd_text().split(";")[:1]
+        while True:
+            cmd_list = get_cmd_text().split(";")[:1]
+            if catch_exception(cmd_list,args):
+                print(catch_exception(cmd_list,args))
+            print("Finished with 0 Errors encounterd")
 
-    try:
-        for cmd in cmd_list:
-            Node = DBparser.Parser(cmd.strip()+';').process()
-            Node.execute(args.verbose)
-    except Exception as e:
-        print("the Exception was: {}, the exception type was :{}".format(e,type(e)))
+###############
+#Testing texts#
+###############
 
-            
 text1 = r""" create table 
             if not exists abc 
         (a int, 
             b varchar, 
             c float)
+            ;"""       
 
-
-             ;"""       
-             
 text2 = r""" load data  
-             infile 
-             
-             
-             
-             abc
-             
-                     into table 
-                     
+            infile 
+            abc
+                    into table      
                         aaa
         ;"""
 text3 = 'create table aab (title varchar,year int,duration int,score float);'
 
 text4 = r""" drop table                                                
-   aaa
+    aaa
         ;"""
+
+text5 =r"""select year,title into outfile abc from movies2 where year > 2013 order by year desc title asc;
+"""
 
 if __name__ == "__main__":
     main()

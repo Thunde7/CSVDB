@@ -51,6 +51,7 @@ class select(object):
         if os.path.exists(os.path.join(os.getcwd(), file_name)):
             raise TableExistsError(file_name)
         os.mkdir(file_name)
+        os.chdir(file_name)
         reader.write(file_name,self.table)
         scheme = [{'field':field,'type':typ} for field,typ in self.fields.items()]
         json.dump({'schema': scheme },open(file_name+'.json','w'),indent=4)
@@ -60,7 +61,6 @@ class select(object):
         self.table_by_rules()
         if verbose:
             print('table {} created by select command'.format(self.name))
-        os.chdir('..')
         if self.name:
             self.create_file(self.name)
         if verbose:
@@ -127,11 +127,10 @@ class drop(object):
     def drop_table(self):
         if os.path.exists(self.name):
             shutil.rmtree(self.name)
-            print("the table {} has been deleted".format(self.name))
         elif not self.ie:
             raise TableDoesNotExistError(self.name)
 
     def execute(self,verbose):
         self.drop_table()
         if verbose:
-            print('table dropped')
+            print("the table {} has been deleted".format(self.name))
