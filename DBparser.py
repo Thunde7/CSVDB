@@ -3,10 +3,6 @@ from cmds import *
 from Tok import Tok
 from Errors import CSVDBSyntaxError
 
-
-    
-
-
 class Parser(object):
     
     def __init__(self,text):
