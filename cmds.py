@@ -11,7 +11,10 @@ class select(object):
     def __init__(self,fields,file_name,origin,where_cond,group_field,group_cond,order_fields):
         self.old_table = reader.reader(origin)
         self.old_scheme = reader.read_scheme(origin)
-        self.fields = {field : self.old_scheme.type_by_field(field) for field in fields}
+        if fields != "*":
+            self.fields = {field : self.old_scheme.type_by_field(field) for field in fields} 
+        else:
+            self.fields = {item['field']:item['type'] for item in self.old_scheme.fields}
         self.origin = origin
         self.name = file_name
         self.get_where(where_cond)

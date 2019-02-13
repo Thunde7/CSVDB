@@ -211,7 +211,7 @@ class SqlTokenizer(object):
 
 
 def _test():
-    text = r"""select * from movies where year > 2001;
+    text = r"""select * from movies2;
     """
 
     tokenizer = SqlTokenizer(text)

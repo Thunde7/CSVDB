@@ -59,7 +59,8 @@ def main():
             cmd_list = get_cmd_text().split(";")[:1]
             if catch_exception(cmd_list,args):
                 print(catch_exception(cmd_list,args))
-            print("Finished with 0 Errors encounterd")
+            else:
+                print("Finished with 0 Errors encounterd")
 
 ###############
 #Testing texts#

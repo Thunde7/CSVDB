@@ -95,7 +95,7 @@ class Parser(object):
         self.cur_tok().is_equal(Tok(token.SqlTokenKind.KEYWORD,'data'))
         self.cur_tok().is_equal(Tok(token.SqlTokenKind.KEYWORD,'infile'))
         origin = self.cur_tok()
-        origin.is_kind("IDENTIFIER")
+        origin.is_kind("LIT_STR")
         origin = origin.val
         self.cur_tok().is_equal(Tok(token.SqlTokenKind.KEYWORD,'into'))
         self.cur_tok().is_equal(Tok(token.SqlTokenKind.KEYWORD,'table'))
@@ -143,14 +143,17 @@ class Parser(object):
         group_field = None
         group_cond = None
         order_fields = []
-        fields = [self.cur_val()]
-        self.step()
-        while self.cur_kind() != token.SqlTokenKind.KEYWORD:
-            if self.cur_val() == ',': 
-                self.step()
-                continue
-            fields.append(self.cur_val())
+        fiel = self.cur_tok()
+        if fiel == Tok(token.SqlTokenKind.OPERATOR,"*"):
+            fields = '*'
+        else:
+            fields = [fiel]
             self.step()
+            while self.cur_kind() != token.SqlTokenKind.KEYWORD:
+                if self.cur_val() == ',': 
+                    self.step()
+                    continue
+                fields.append(self.cur_tok().val)
         tmp = self.cur_tok()
         tmp.is_kind("KEYWORD")
         if tmp.val == 'into':
