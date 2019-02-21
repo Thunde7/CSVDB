@@ -21,6 +21,7 @@ class select(object):
         self.order = order_fields
         if group_field or group_cond:
             raise NotImplementedError
+        self.file_name = file_name
         
     def get_where(self,where_cond):
         if where_cond == []: self.where_lines = [i for i in range(self.old_table.length)]; return  

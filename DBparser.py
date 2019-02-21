@@ -134,9 +134,14 @@ class Parser(object):
         return drop(table_name,if_exists)
 
     def createAS(self,table_name,if_not_exists):
-        raise NotImplementedError
+        if self.cur_val() == 'select':
+            self.step()
+            return self.select(create_as = table_name)
+        else:
+            raise CSVDBSyntaxError("can only create as select.",self.tokens[self._index].line,
+                                        self.tokens[self._index].col, "please check your Input!")
 
-    def select(self):
+    def select(self, create_as = False):
         'parsing the select function syntax, asserting long to way to make sure its the correct syntax'
         file_name = None
         where_cond = []
@@ -157,6 +162,9 @@ class Parser(object):
         tmp = self.cur_tok()
         tmp.is_kind("KEYWORD")
         if tmp.val == 'into':
+            if create_as:
+                raise CSVDBSyntaxError("cannot CREATE AS SELECT INTO FILE",self.tokens[self._index].line,
+                                        self.tokens[self._index].col, "please check your Input!")
             self.cur_tok().is_equal(Tok(token.SqlTokenKind.KEYWORD,'outfile'))
             file_name = self.cur_tok()
             file_name.is_kind("IDENTIFIER")
@@ -201,6 +209,8 @@ class Parser(object):
         assert(self.cur_val() == None or self.cur_val() == ';') #making sure that its either the end or the ;
         if self.verbose:
             print("The input was proccessed, SELECTING the table;")
+        if file_name is None and create_as:
+            file_name = create_as
         return select(fields,file_name,origin,where_cond,group_field,group_cond,order_fields)            
 
 
