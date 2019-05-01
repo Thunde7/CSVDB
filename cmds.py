@@ -12,7 +12,7 @@ class select(object):
         self.old_table = reader.reader(origin)
         self.old_scheme = reader.read_scheme(origin)
         if fields != "*":
-            self.fields = {field : self.old_scheme.type_by_field(field) for field in fields} 
+            self.fields = {field : self.old_scheme.type_by_field(field) for field in fields}
         else:
             self.fields = {item['field']:item['type'] for item in self.old_scheme.fields}
         self.origin = origin
@@ -22,10 +22,10 @@ class select(object):
         if group_field or group_cond:
             raise NotImplementedError
         self.file_name = file_name
-        
+
     def get_where(self,where_cond):
-        if where_cond == []: self.where_lines = [i for i in range(self.old_table.length)]; return  
-        constant = where_cond[2] if where_cond[2] != 'NULL' or self.fields[where_cond[0]] != 'varchar' else '' 
+        if where_cond == []: self.where_lines = [i for i in range(self.old_table.length)]; return
+        constant = where_cond[2] if where_cond[2] != 'NULL' or self.fields[where_cond[0]] != 'varchar' else ''
         where_dict = {
         '<': lambda item : item != 'NULL' and item < constant,
         '=': lambda item : item != 'NULL' and item == constant,
@@ -49,9 +49,9 @@ class select(object):
                                              for i in range(len(self.fields))]
         self.table = Table(table_columms)
         self.table.order(self.order)
-        
 
-    def create_file(self,file_name): 
+
+    def create_file(self,file_name):
         if os.path.exists(os.path.join(os.getcwd(), file_name)):
             raise TableExistsError(file_name)
         os.mkdir(file_name)
@@ -72,8 +72,8 @@ class select(object):
 
 class load(object):
     def __init__(self,origin,name,ignoring):
-        self.origin = origin
-        self.raw_table = reader.reader(self.origin)
+        self.origin = os.getcwd() + os.path.sep + origin.split(".")[0] + os.path.sep + origin.split(".")[0]
+        self.raw_table = reader.reader(self.origin,ignoring)
         print("Table {}.zis loaded".format(self.origin))
         self.scheme = reader.read_scheme(self.origin)
         print("scheme {}.json loaded".format(self.origin))
@@ -85,10 +85,10 @@ class load(object):
         os.mkdir(self.name)
         os.chdir(self.name)
         reader.write(self.name,self.raw_table,self.ignoring)
-        
+
         json.dump({'schema': self.scheme.fields},open(self.name+'.json','w'),indent=4)
         os.chdir('..')
-        
+
     def execute(self, verbose):
         self.loader()
         if verbose:
@@ -104,11 +104,11 @@ class create(object):
     def create_table(self):
         if os.path.exists(self.name):
             if self.ine: return
-            if not self.ine: raise TableExistsError(self.name)
+            else: raise TableExistsError(self.name)
         os.mkdir(self.name)
         os.chdir(self.name)
-        reader.write(self.name,self.fields.values())   
-    
+        reader.write(self.name,self.fields.values())
+
     def create_scheme(self):
         res = [{'field':field,'type':typ} for field,typ in self.fields.items()]
         json.dump({'schema': res },open(self.name+'.json','w'),indent=4)
@@ -122,7 +122,7 @@ class create(object):
             print('scheme {}.json created'.format(self.name))
         os.chdir('..')
 
-        
+
 class drop(object):
     def __init__(self,table_name,if_exists):
         self.ie = if_exists

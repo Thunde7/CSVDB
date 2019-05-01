@@ -4,7 +4,7 @@ from Tok import Tok
 from Errors import CSVDBSyntaxError
 
 class Parser(object):
-    
+
     def __init__(self,text,verbose):
         self.token = token.SqlTokenizer(text) #deviding the input to tokens
         self.tokens = []
@@ -40,7 +40,7 @@ class Parser(object):
 
     def step(self,n=1):
         'shifting the current index n steps ahead'
-        self._index += n 
+        self._index += n
 
     def cur_tok(self):
         'the current token in the list, also shifts the index by 1'
@@ -51,13 +51,13 @@ class Parser(object):
     def cur_val(self):
         'returns the current token"s value this does not shift the index'
         return self.tokens[self._index].val
-    
+
     def cur_kind(self):
         'returns the current token"s kind this does not shift the index'
         return self.tokens[self._index].kind
 
     def create(self):
-        'parsing the create function syntax, asserting long to way to make sure its the correct syntax' 
+        'parsing the create function syntax, asserting long to way to make sure its the correct syntax'
         self.cur_tok().is_equal(Tok(token.SqlTokenKind.KEYWORD,'table'))
         if_not_exists = False
         t = self.cur_tok()
@@ -65,7 +65,7 @@ class Parser(object):
             self.cur_tok().is_equal(Tok(token.SqlTokenKind.KEYWORD,'not'))
             self.cur_tok().is_equal(Tok(token.SqlTokenKind.KEYWORD,'exists'))
             if_not_exists == True
-            t = self.cur_tok()  
+            t = self.cur_tok()
         t.is_kind("IDENTIFIER")
         table_name = t.val
         tmp = self.cur_tok()
@@ -78,8 +78,8 @@ class Parser(object):
         typ.is_kind("KEYWORD")
         fields = {fiel.val:typ.val}
         while not self.cur_kind() == token.SqlTokenKind.OPERATOR or self.cur_val() != ')':
-            if self.cur_val() == "," : self.step()  #skipping commas 
-            fiel = self.cur_tok()                   #making sure the token 
+            if self.cur_val() == "," : self.step()  #skipping commas
+            fiel = self.cur_tok()                   #making sure the token
             fiel.is_kind("IDENTIFIER")              #secifies the next field
             typ = self.cur_tok()                    #making sure the token
             typ.is_kind("KEYWORD")                  #specifies the next field type
@@ -88,8 +88,8 @@ class Parser(object):
         assert(self.cur_val() == None or self.cur_val() == ';') #making sure that its either the end or the ;
         if self.verbose:
             print("The input was proccessed, CREATING the table;")
-        return create(table_name,if_not_exists,fields)            
-    
+        return create(table_name,if_not_exists,fields)
+
     def load(self):
         'parsing the load function syntax, asserting along to way to make sure its the correct syntax'
         self.cur_tok().is_equal(Tok(token.SqlTokenKind.KEYWORD,'data'))
@@ -104,13 +104,13 @@ class Parser(object):
         table_name = table_name.val
         ignoring = 0
         tmp = self.cur_tok()
+        print(tmp.val)
         if tmp == Tok(token.SqlTokenKind.KEYWORD,'ignore'):
             ignoring = self.cur_tok()
             ignoring.is_kind("LIT_NUM")
             ignoring = ignoring.val
             self.cur_tok().is_equal(Tok(token.SqlTokenKind.KEYWORD,'lines'))
             tmp = self.cur_tok()
-        assert(tmp.val == None or tmp.val == ';') #making sure that its either the end or the ;
         if self.verbose:
             print("The input was proccessed, LOADING the table;")
         return load(origin,table_name,ignoring)
@@ -130,7 +130,7 @@ class Parser(object):
         assert(self.cur_val() == None or self.cur_val() == ';') #making sure that its either the end or the ;
         if self.verbose:
             print("The input was proccessed, DROPPING the table;")
-        
+
         return drop(table_name,if_exists)
 
     def createAS(self,table_name,if_not_exists):
@@ -155,7 +155,7 @@ class Parser(object):
             fields = [fiel]
             self.step()
             while self.cur_kind() != token.SqlTokenKind.KEYWORD:
-                if self.cur_val() == ',': 
+                if self.cur_val() == ',':
                     self.step()
                     continue
                 fields.append(self.cur_tok().val)
@@ -178,7 +178,7 @@ class Parser(object):
         if x == Tok(token.SqlTokenKind.KEYWORD,'where'):
             tmp = self.cur_tok()
             tmp.is_kind("IDENTIFIER")
-            where_cond.append(tmp.val) 
+            where_cond.append(tmp.val)
             tmp = self.cur_tok()
             tmp.is_kind("OPERATOR")
             where_cond.append(tmp.val)
@@ -211,6 +211,4 @@ class Parser(object):
             print("The input was proccessed, SELECTING the table;")
         if file_name is None and create_as:
             file_name = create_as
-        return select(fields,file_name,origin,where_cond,group_field,group_cond,order_fields)            
-
-
+        return select(fields,file_name,origin,where_cond,group_field,group_cond,order_fields)

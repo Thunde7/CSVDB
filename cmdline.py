@@ -38,27 +38,29 @@ def clear_screen():
         os.system('cls')
 
 def catch_exception(cmd_list,args):
-    try:
-        for cmd in cmd_list:
+    for cmd in cmd_list:
+        try:
             Node = DBparser.Parser(cmd.strip()+';',args.verbose).process()
             Node.execute(args.verbose)
-    except Exception as e:
-        return("The parsing failed; \n The Exception was: {}; \n That exception type is :{}".format(e,type(e)))
+        except Exception as e:
+            return("The parsing failed; \n The Exception was: {}; \n That exception type is :{}".format(e,type(e)))
     return(0)
 
 def main():
     clear_screen()
     if args.run:
+        print(args.run)
         with open(args.run) as cmdfile:
             cmd_list = cmdfile.read().split(";")
-        catch_exception(cmd_list,args)
-        print("Finished with 0 Errors encounterd")
-    
+        err = catch_exception(cmd_list,args)
+        if not err:
+            print("Finished with 0 Errors encounterd")
     else:
         while True:
             cmd_list = get_cmd_text().split(";")[:1]
-            if catch_exception(cmd_list,args):
-                print(catch_exception(cmd_list,args))
+            e = catch_exception(cmd_list,args)
+            if e:
+                print(e)
             else:
                 print("Finished with 0 Errors encounterd")
 

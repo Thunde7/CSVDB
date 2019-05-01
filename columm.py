@@ -1,10 +1,11 @@
+
 class NULL(int):
     def __init__(self):
-        self.num = -(2**127-1)
-    
+        self.num = -float('inf')
+
     def __repr__(self):
         return 'NULL'
-    
+
     def __lt__(self,other):
         return self.num < other
 
@@ -20,7 +21,7 @@ class Columm(object):
                 else: self.items.append(NULL())
         elif self.typ == 'float': self.items = [float(item) for item in item_list]
         else: self.items = item_list
-    
+
     def __getitem__(self,i):
         return self.items[i]
 
@@ -37,7 +38,7 @@ class Columm(object):
     def get_order(self,opt):
         numbered_items = list(zip(self.items,range(len(self.items))))
         return [new_i for item,new_i in sorted(numbered_items,reverse = opt)]
-    
+
     def order_by(self,seder):
         new_items = [self.items[i] for i in seder]
         self.items = new_items
@@ -45,7 +46,7 @@ class Columm(object):
     def group(self):
         group_lines = []
         group = []
-        old_item = self.items[0] 
+        old_item = self.items[0]
         for line,item in enumerate(self.items):
             if item == old_item:
                 group.append(line)
@@ -53,4 +54,3 @@ class Columm(object):
                 group_lines.append(group)
                 group = [line]
         return group_lines
-
