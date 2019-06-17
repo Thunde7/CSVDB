@@ -4,12 +4,12 @@
 import os,json,shutil,csv,reader
 from Errors import TableDoesNotExistError,TableExistsError
 from table import Table
-from columm import Columm
-
+from column import Column
+FILEENDING = ".zis"
 
 class select(object):
     def __init__(self,fields,file_name,origin,where_cond,group_field,group_cond,order_fields):
-        self.old_table = reader.reader(origin)
+        self.old_table = reader.reader(origin, False)
         self.old_scheme = reader.read_scheme(origin)
         if fields != "*":
             self.fields = {field : self.old_scheme.type_by_field(field) for field in fields}
@@ -17,7 +17,8 @@ class select(object):
             self.fields = {item['field']:item['type'] for item in self.old_scheme.fields}
         self.origin = origin
         self.name = file_name
-        self.get_where(where_cond)
+        if where_cond != []:
+            self.get_where(where_cond)
         self.order = order_fields
         if group_field or group_cond:
             raise NotImplementedError
@@ -37,17 +38,17 @@ class select(object):
         'is not': lambda item : item is not constant,
         }
         where_func = where_dict[where_cond[1]]
-        self.where_lines = self.old_table.columms[where_cond[0]].where(where_func)
+        self.where_lines = self.old_table.columns[where_cond[0]].where(where_func)
 
     def table_by_rules(self):
-        needed_columms = [self.old_table.columms[field] for field in self.fields.keys()]
-        self.new_columms = [[] for _ in needed_columms]
+        needed_columns = [self.old_table.columns[field] for field in self.fields.keys()]
+        self.new_columns = [[] for _ in needed_columns]
         for line in self.where_lines:
-            for i in range(len(needed_columms)):
-                self.new_columms[i].append(needed_columms[i][line])
-        table_columms = [Columm(list(self.fields.keys())[i],list(self.fields.values())[i],self.new_columms[i])\
+            for i in range(len(needed_columns)):
+                self.new_columns[i].append(needed_columns[i][line])
+        table_columns = [Column(list(self.fields.keys())[i],list(self.fields.values())[i],self.new_columns[i])\
                                              for i in range(len(self.fields))]
-        self.table = Table(table_columms)
+        self.table = Table(table_columns)
         self.table.order(self.order)
 
 
@@ -71,29 +72,32 @@ class select(object):
             print(self.table)
 
 class load(object):
+    global FILEENDING
     def __init__(self,origin,name,ignoring):
-        self.origin = os.getcwd() + os.path.sep + origin.split(".")[0] + os.path.sep + origin.split(".")[0]
-        self.raw_table = reader.reader(self.origin,ignoring)
-        print("Table {}.zis loaded".format(self.origin))
-        self.scheme = reader.read_scheme(self.origin)
-        print("scheme {}.json loaded".format(self.origin))
+        if os.path.isdir(os.getcwd() + os.path.sep + origin.split(".")[0]):
+            self.origin = os.getcwd() + os.path.sep + origin.split(".")[0] + os.path.sep + origin
+        else:
+            self.origin = os.getcwd() + os.path.sep + origin
         self.name = name
         self.ignoring = ignoring
 
     def loader(self):
-        if os.path.exists(self.name): raise TableExistsError(self.name)
-        os.mkdir(self.name)
-        os.chdir(self.name)
-        reader.write(self.name,self.raw_table,self.ignoring)
+        with open(self.origin,"r") as f:
+            dest = open("." + os.path.sep + self.name + os.path.sep + self.name  + FILEENDING,"a+")
+            for _ in range(self.ignoring):
+                f.readline()
+            nextLine = f.readline()
+            while nextLine:
+                dest.write(nextLine + "\n")
+                nextLine = f.readline()
+        f.close()
+        dest.close()
 
-        json.dump({'schema': self.scheme.fields},open(self.name+'.json','w'),indent=4)
-        os.chdir('..')
 
     def execute(self, verbose):
         self.loader()
         if verbose:
-            print("Table {}.zis was loaded from {}.zis without {} rows".format(self.name,self.origin,self.ignoring))
-        os.chdir('..')
+            print(f"Table {self.origin} was loaded into {self.name} without {self.ignoring} rows")
 
 class create(object):
     def __init__(self,table_name,if_not_exists,fields):
@@ -105,9 +109,12 @@ class create(object):
         if os.path.exists(self.name):
             if self.ine: return
             else: raise TableExistsError(self.name)
+        self.table = Table([Column(header,typ,[]) for (header,typ) in list(self.fields.items())])
+        print("=====================TABLE======================\n", self.table)
+
         os.mkdir(self.name)
         os.chdir(self.name)
-        reader.write(self.name,self.fields.values())
+        reader.write(self.name,self.table)
 
     def create_scheme(self):
         res = [{'field':field,'type':typ} for field,typ in self.fields.items()]

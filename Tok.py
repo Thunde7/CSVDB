@@ -9,8 +9,11 @@ class Tok(object):
         self.line = line
         self.col = col
 
-    def __repr__(self):
+    def __str__(self):
         return "{}:{}".format(self.kind,self.val)
+
+    def __hash__(self):
+        return 31 * (self.col - self.line) 
 
     def __eq__(self,other):
         return self.kind == other.kind and self.val == other.val
@@ -22,10 +25,13 @@ class Tok(object):
         except AssertionError:
             raise AssertionError("error at line {}, columm {}, should be equal to {}\n was {}".format(self.line,self.col,other,self))
 
-    def is_kind(self,kind):
-        try:
-            assert(self.kind == eval("SqlTokenKind.{}".format(kind)))
-        except AssertionError:
+    def is_kind(self,kinds):
+        doesfail = True
+        for kind in kinds:
+            if (self.kind == eval("SqlTokenKind.{}".format(kind))):
+                doesfail = False
+        
+        if doesfail:
             raise AssertionError("error at line {}, columm {}, should be of {} kind".format(self.line,self.col,kind))
     
    

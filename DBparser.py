@@ -66,23 +66,23 @@ class Parser(object):
             self.cur_tok().is_equal(Tok(token.SqlTokenKind.KEYWORD,'exists'))
             if_not_exists == True
             t = self.cur_tok()
-        t.is_kind("IDENTIFIER")
+        t.is_kind(["IDENTIFIER"])
         table_name = t.val
         tmp = self.cur_tok()
         if tmp == (Tok(token.SqlTokenKind.KEYWORD,'as')):
             self.createAS(table_name,if_not_exists)
         tmp.is_equal(Tok(token.SqlTokenKind.OPERATOR,'('))
         fiel = self.cur_tok()
-        fiel.is_kind("IDENTIFIER")
+        fiel.is_kind(["IDENTIFIER"])
         typ = self.cur_tok()
-        typ.is_kind("KEYWORD")
+        typ.is_kind(["KEYWORD"])
         fields = {fiel.val:typ.val}
         while not self.cur_kind() == token.SqlTokenKind.OPERATOR or self.cur_val() != ')':
             if self.cur_val() == "," : self.step()  #skipping commas
             fiel = self.cur_tok()                   #making sure the token
-            fiel.is_kind("IDENTIFIER")              #secifies the next field
+            fiel.is_kind(["IDENTIFIER"])              #secifies the next field
             typ = self.cur_tok()                    #making sure the token
-            typ.is_kind("KEYWORD")                  #specifies the next field type
+            typ.is_kind(["KEYWORD"])                  #specifies the next field type
             fields[fiel.val] = typ.val              #setting the field type according to the given input
         self.step()                                 # shifting the index to skip the ')'
         assert(self.cur_val() == None or self.cur_val() == ';') #making sure that its either the end or the ;
@@ -95,19 +95,19 @@ class Parser(object):
         self.cur_tok().is_equal(Tok(token.SqlTokenKind.KEYWORD,'data'))
         self.cur_tok().is_equal(Tok(token.SqlTokenKind.KEYWORD,'infile'))
         origin = self.cur_tok()
-        origin.is_kind("LIT_STR")
+        origin.is_kind(["LIT_STR"])
         origin = origin.val
         self.cur_tok().is_equal(Tok(token.SqlTokenKind.KEYWORD,'into'))
         self.cur_tok().is_equal(Tok(token.SqlTokenKind.KEYWORD,'table'))
         table_name = self.cur_tok()
-        table_name.is_kind("IDENTIFIER")
+        table_name.is_kind(["IDENTIFIER"])
         table_name = table_name.val
         ignoring = 0
         tmp = self.cur_tok()
         print(tmp.val)
         if tmp == Tok(token.SqlTokenKind.KEYWORD,'ignore'):
             ignoring = self.cur_tok()
-            ignoring.is_kind("LIT_NUM")
+            ignoring.is_kind(["LIT_NUM"])
             ignoring = ignoring.val
             self.cur_tok().is_equal(Tok(token.SqlTokenKind.KEYWORD,'lines'))
             tmp = self.cur_tok()
@@ -125,7 +125,7 @@ class Parser(object):
             self.cur_tok().is_equal(Tok(token.SqlTokenKind.KEYWORD,'exists'))
             if_exists = True
             tmp = self.cur_tok()
-        tmp.is_kind("IDENTIFIER")
+        tmp.is_kind(["IDENTIFIER"])
         table_name = tmp.val
         assert(self.cur_val() == None or self.cur_val() == ';') #making sure that its either the end or the ;
         if self.verbose:
@@ -160,41 +160,44 @@ class Parser(object):
                     continue
                 fields.append(self.cur_tok().val)
         tmp = self.cur_tok()
-        tmp.is_kind("KEYWORD")
+        tmp.is_kind(["KEYWORD"])
         if tmp.val == 'into':
             if create_as:
                 raise CSVDBSyntaxError("cannot CREATE AS SELECT INTO FILE",self.tokens[self._index].line,
                                         self.tokens[self._index].col, "please check your Input!")
             self.cur_tok().is_equal(Tok(token.SqlTokenKind.KEYWORD,'outfile'))
             file_name = self.cur_tok()
-            file_name.is_kind("IDENTIFIER")
+            file_name.is_kind(["LIT_STR"])
             file_name = file_name.val
             tmp = self.cur_tok()
         tmp.is_equal(Tok(token.SqlTokenKind.KEYWORD,'from'))
         origin = self.cur_tok()
-        origin.is_kind("IDENTIFIER")
+        origin.is_kind(["IDENTIFIER"])
         origin = origin.val
         x = self.cur_tok()
+        print(x)
         if x == Tok(token.SqlTokenKind.KEYWORD,'where'):
             tmp = self.cur_tok()
-            tmp.is_kind("IDENTIFIER")
+            tmp.is_kind(["IDENTIFIER"])
             where_cond.append(tmp.val)
             tmp = self.cur_tok()
-            tmp.is_kind("OPERATOR")
+            tmp.is_kind(["OPERATOR"])
             where_cond.append(tmp.val)
             tmp = self.cur_tok()
-            tmp.is_kind("LIT_NUM")
+            print(tmp)
+            if tmp.val == "null" or tmp.is_kind(["LIT_NUM","LIT_STR"]):
+                pass
             where_cond.append(tmp.val)
             x = self.cur_tok()
         if x == Tok(token.SqlTokenKind.KEYWORD,'group'):
             self.cur_tok().is_equal(Tok(token.SqlTokenKind.KEYWORD,'by'))
             group_field = self.cur_tok()
-            group_field.is_kind("IDENTIFIER")
+            group_field.is_kind(["IDENTIFIER"])
             group_field = group_field.val
             x = self.cur_tok()
         if x == Tok(token.SqlTokenKind.KEYWORD,'having'):
             group_cond = self.cur_tok()
-            group_cond.is_kind("IDENTIFIER")
+            group_cond.is_kind(["IDENTIFIER"])
             group_cond = group_cond.val
             x = self.cur_tok()
         if x == Tok(token.SqlTokenKind.KEYWORD,'order'):
@@ -202,7 +205,7 @@ class Parser(object):
             while not (self.cur_val() == None or self.cur_val() == ';'):
                 if self.cur_val() == "," : self.step()
                 field = self.cur_tok()
-                field.is_kind("IDENTIFIER")
+                field.is_kind(["IDENTIFIER"])
                 opt = self.cur_tok()
                 assert(opt in [Tok(token.SqlTokenKind.KEYWORD,'asc'),Tok(token.SqlTokenKind.KEYWORD,'desc')])
                 order_fields.append((field.val,opt.val))

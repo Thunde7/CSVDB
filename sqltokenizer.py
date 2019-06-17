@@ -73,6 +73,7 @@ class SqlTokenizer(object):
         ">",
         ";",
         "*",
+        "is",
     ]
 
     def __init__(self, text):
