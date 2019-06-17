@@ -20,16 +20,17 @@ class read_scheme(object):
         return self.fields[self.nameIndexDict[field]]["type"]
 
 
-def reader(filename, ignoring):
+def reader(filename, ignoring,scheme=None):
     print(filename)
     #os.chdir(os.path.sep.join(os.path.sep.split(filename)[:-1]))
     os.chdir(filename)
     print(os.getcwd())
     print(os.listdir("."))
-    try:
-        scheme = read_scheme(filename)
-    except:
-        scheme = {}
+    if scheme is None:
+        try:
+            scheme = read_scheme(filename)
+        except:
+            scheme = {}
     if not os.path.exists(filename + '.zis'):
         fil = csv.reader(open(filename+ '.csv'))
     else:   

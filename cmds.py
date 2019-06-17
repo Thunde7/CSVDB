@@ -9,16 +9,18 @@ FILEENDING = ".zis"
 
 class select(object):
     def __init__(self,fields,file_name,origin,where_cond,group_field,group_cond,order_fields):
-        self.old_table = reader.reader(origin, False)
         self.old_scheme = reader.read_scheme(origin)
+        self.old_table = reader.reader(origin, False,self.old_scheme)
         if fields != "*":
             self.fields = {field : self.old_scheme.type_by_field(field) for field in fields}
         else:
+            print(self.old_scheme.fields)
             self.fields = {item['field']:item['type'] for item in self.old_scheme.fields}
         self.origin = origin
         self.name = file_name
         if where_cond != []:
             self.get_where(where_cond)
+        else: self.where_lines = '*'
         self.order = order_fields
         if group_field or group_cond:
             raise NotImplementedError
@@ -41,13 +43,20 @@ class select(object):
         self.where_lines = self.old_table.columns[where_cond[0]].where(where_func)
 
     def table_by_rules(self):
-        needed_columns = [self.old_table.columns[field] for field in self.fields.keys()]
+        if isinstance(self.old_table,Table):
+            needed_columns = [self.old_table.columns[field] for field in self.fields.keys()]
+        else:
+            print("fuckkkkkk")
+            needed_columns = [col for col in self.old_table if col[0].type
+                in [self.old_scheme.type_by_field(field) for field in self.fields]]
+        
         self.new_columns = [[] for _ in needed_columns]
+        if self.where_lines != "*": self.where_lines = [i for i in range(len(needed_columns[0]))]
         for line in self.where_lines:
             for i in range(len(needed_columns)):
                 self.new_columns[i].append(needed_columns[i][line])
         table_columns = [Column(list(self.fields.keys())[i],list(self.fields.values())[i],self.new_columns[i])\
-                                             for i in range(len(self.fields))]
+                                            for i in range(len(self.fields))]
         self.table = Table(table_columns)
         self.table.order(self.order)
 
