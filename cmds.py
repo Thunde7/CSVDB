@@ -15,7 +15,7 @@ class select(object):
             self.fields = {field : self.old_scheme.type_by_field(field) for field in fields}
         else:
             print(self.old_scheme.fields)
-            self.fields = {item['field']:item['type'] for item in self.old_scheme.fields}
+            self.fields = {item['field'] : item['type'] for item in self.old_scheme.fields}
         self.origin = origin
         self.name = file_name
         if where_cond != []:
@@ -27,7 +27,7 @@ class select(object):
         self.file_name = file_name
 
     def get_where(self,where_cond):
-        if where_cond == []: self.where_lines = [i for i in range(self.old_table.length)]; return
+        #if where_cond == []: self.where_lines = [i for i in range(self.old_table.length)]; return
         constant = where_cond[2] if where_cond[2] != 'NULL' or self.fields[where_cond[0]] != 'varchar' else ''
         where_dict = {
         '<': lambda item : item != 'NULL' and item < constant,
@@ -46,17 +46,19 @@ class select(object):
         if isinstance(self.old_table,Table):
             needed_columns = [self.old_table.columns[field] for field in self.fields.keys()]
         else:
-            print("fuckkkkkk")
             needed_columns = [col for col in self.old_table if col[0].type
                 in [self.old_scheme.type_by_field(field) for field in self.fields]]
         
         self.new_columns = [[] for _ in needed_columns]
-        if self.where_lines != "*": self.where_lines = [i for i in range(len(needed_columns[0]))]
+        if self.where_lines == "*": self.where_lines = [i for i in range(len(needed_columns[0]))]
         for line in self.where_lines:
             for i in range(len(needed_columns)):
                 self.new_columns[i].append(needed_columns[i][line])
-        table_columns = [Column(list(self.fields.keys())[i],list(self.fields.values())[i],self.new_columns[i])\
-                                            for i in range(len(self.fields))]
+        table_columns = [
+                        Column(list(self.fields.keys())[i],
+                        list(self.fields.values())[i],self.new_columns[i])
+                        for i in range(len(self.fields))
+                        ]
         self.table = Table(table_columns)
         self.table.order(self.order)
 
@@ -119,7 +121,6 @@ class create(object):
             if self.ine: return
             else: raise TableExistsError(self.name)
         self.table = Table([Column(header,typ,[]) for (header,typ) in list(self.fields.items())])
-        print("=====================TABLE======================\n", self.table)
 
         os.mkdir(self.name)
         os.chdir(self.name)

@@ -46,6 +46,7 @@ def reader(filename, ignoring,scheme=None):
     if scheme != {}:
         for item in columns:
             print('len of item is ' + str(len(item)))
+            print(item)
             if len(item) > 1:
                 columnlist.append(Column(item[0],scheme.type_by_field(item[0]),item[1:]))
             else:
@@ -60,9 +61,10 @@ def reader(filename, ignoring,scheme=None):
 
 
 def write(filename,table,ignoring = -1):
-    if type(table) == list:
+    print(table)
+    if not isinstance(table,Table):
         fil = open(filename + '.zis','w+')
-        for i,row in [[str(col[i]) for col in table] for i in range(len(table[0]))]:
+        for i,row in enumerate([[str(col[i]) for col in table] for i in range(len(table[0]))]):
             if ignoring <= i:
                 fil.write(','.join(row))
                 fil.write('\n')
