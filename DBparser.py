@@ -152,8 +152,7 @@ class Parser(object):
         if fiel == Tok(token.SqlTokenKind.OPERATOR,"*"):
             fields = '*'
         else:
-            fields = [fiel]
-            self.step()
+            fields = []
             while self.cur_kind() != token.SqlTokenKind.KEYWORD:
                 if self.cur_val() == ',':
                     self.step()
@@ -175,7 +174,6 @@ class Parser(object):
         origin.is_kind(["IDENTIFIER"])
         origin = origin.val
         x = self.cur_tok()
-        print(x)
         if x == Tok(token.SqlTokenKind.KEYWORD,'where'):
             tmp = self.cur_tok()
             tmp.is_kind(["IDENTIFIER"])
@@ -184,7 +182,6 @@ class Parser(object):
             tmp.is_kind(["OPERATOR"])
             where_cond.append(tmp.val)
             tmp = self.cur_tok()
-            print(tmp)
             if tmp.val == "null" or tmp.is_kind(["LIT_NUM","LIT_STR"]):
                 pass
             where_cond.append(tmp.val)

@@ -49,7 +49,6 @@ def catch_exception(cmd_list,args):
 def main():
     clear_screen()
     if args.run:
-        print(args.run)
         with open(args.run) as cmdfile:
             cmd_list = cmdfile.read().split(";")
         err = catch_exception(cmd_list,args)

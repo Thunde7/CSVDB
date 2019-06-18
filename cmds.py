@@ -14,7 +14,6 @@ class select(object):
         if fields != "*":
             self.fields = {field : self.old_scheme.type_by_field(field) for field in fields}
         else:
-            print(self.old_scheme.fields)
             self.fields = {item['field'] : item['type'] for item in self.old_scheme.fields}
         self.origin = origin
         self.name = file_name
